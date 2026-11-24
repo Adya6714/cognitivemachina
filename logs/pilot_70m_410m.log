@@ -1,0 +1,47 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+fit stats 64s
+S alone: KL 0.777 acc 0.630 top1 0.618 ce 3.312
+T alone ce 2.566
+lam 0.001 k  1 S->T   R2 0.306 KL 3.956 acc 0.206 top1 0.203 ce 6.519 recov -4.29
+lam 0.001 k  1 T0->T  R2 0.879 KL 0.233 acc 0.815 top1 0.809 ce 2.782 recov 0.71
+lam 0.001 k  2 S->T   R2 0.286 KL 3.242 acc 0.262 top1 0.267 ce 5.808 recov -3.34
+lam 0.001 k  2 T0->T  R2 0.747 KL 0.672 acc 0.659 top1 0.646 ce 3.215 recov 0.13
+lam 0.001 k  6 S->T   R2 0.308 KL 2.815 acc 0.308 top1 0.283 ce 5.359 recov -2.74
+lam 0.001 k  6 T0->T  R2 0.432 KL 2.164 acc 0.342 top1 0.344 ce 4.705 recov -1.86
+lam 0.001 k 12 S->T   R2 0.341 KL 1.999 acc 0.402 top1 0.379 ce 4.557 recov -1.67
+lam 0.001 k 12 T0->T  R2 0.358 KL 2.609 acc 0.292 top1 0.275 ce 5.160 recov -2.47
+lam 0.001 k 18 S->T   R2 0.439 KL 1.774 acc 0.441 top1 0.415 ce 4.339 recov -1.37
+lam 0.001 k 18 T0->T  R2 0.283 KL 3.897 acc 0.237 top1 0.213 ce 6.454 recov -4.21
+lam 0.001 k 22 S->T   R2 0.465 KL 1.814 acc 0.442 top1 0.421 ce 4.385 recov -1.44
+lam 0.001 k 22 T0->T  R2 0.247 KL 4.553 acc 0.213 top1 0.191 ce 7.110 recov -5.08
+lam 0.001 k 24 S->T   R2 0.551 KL 2.349 acc 0.423 top1 0.399 ce 4.922 recov -2.16
+lam 0.001 k 24 T0->T  R2 0.291 KL 6.497 acc 0.193 top1 0.170 ce 9.090 recov -7.74
+lam 0.01 k  1 S->T   R2 0.306 KL 4.025 acc 0.202 top1 0.203 ce 6.586 recov -4.38
+lam 0.01 k  1 T0->T  R2 0.879 KL 0.234 acc 0.814 top1 0.809 ce 2.783 recov 0.71
+lam 0.01 k  2 S->T   R2 0.285 KL 3.306 acc 0.257 top1 0.261 ce 5.873 recov -3.43
+lam 0.01 k  2 T0->T  R2 0.747 KL 0.674 acc 0.659 top1 0.645 ce 3.217 recov 0.13
+lam 0.01 k  6 S->T   R2 0.308 KL 2.883 acc 0.302 top1 0.276 ce 5.428 recov -2.83
+lam 0.01 k  6 T0->T  R2 0.432 KL 2.170 acc 0.341 top1 0.345 ce 4.711 recov -1.87
+lam 0.01 k 12 S->T   R2 0.341 KL 2.022 acc 0.399 top1 0.376 ce 4.579 recov -1.70
+lam 0.01 k 12 T0->T  R2 0.358 KL 2.609 acc 0.292 top1 0.275 ce 5.160 recov -2.47
+lam 0.01 k 18 S->T   R2 0.439 KL 1.789 acc 0.438 top1 0.414 ce 4.354 recov -1.39
+lam 0.01 k 18 T0->T  R2 0.283 KL 3.893 acc 0.237 top1 0.214 ce 6.450 recov -4.20
+lam 0.01 k 22 S->T   R2 0.465 KL 1.825 acc 0.440 top1 0.418 ce 4.395 recov -1.45
+lam 0.01 k 22 T0->T  R2 0.247 KL 4.547 acc 0.213 top1 0.191 ce 7.104 recov -5.08
+lam 0.01 k 24 S->T   R2 0.551 KL 2.389 acc 0.420 top1 0.396 ce 4.963 recov -2.21
+lam 0.01 k 24 T0->T  R2 0.291 KL 6.513 acc 0.193 top1 0.170 ce 9.106 recov -7.76
+lam 0.1 k  1 S->T   R2 0.293 KL 4.543 acc 0.175 top1 0.173 ce 7.102 recov -5.07
+lam 0.1 k  1 T0->T  R2 0.870 KL 0.264 acc 0.801 top1 0.795 ce 2.812 recov 0.67
+lam 0.1 k  2 S->T   R2 0.273 KL 3.864 acc 0.221 top1 0.217 ce 6.433 recov -4.18
+lam 0.1 k  2 T0->T  R2 0.739 KL 0.705 acc 0.649 top1 0.642 ce 3.248 recov 0.09
+lam 0.1 k  6 S->T   R2 0.295 KL 3.421 acc 0.258 top1 0.237 ce 5.969 recov -3.56
+lam 0.1 k  6 T0->T  R2 0.427 KL 2.243 acc 0.332 top1 0.338 ce 4.786 recov -1.97
+lam 0.1 k 12 S->T   R2 0.327 KL 2.235 acc 0.368 top1 0.347 ce 4.792 recov -1.98
+lam 0.1 k 12 T0->T  R2 0.354 KL 2.629 acc 0.287 top1 0.274 ce 5.179 recov -2.50
+lam 0.1 k 18 S->T   R2 0.425 KL 1.950 acc 0.415 top1 0.387 ce 4.510 recov -1.60
+lam 0.1 k 18 T0->T  R2 0.280 KL 3.881 acc 0.236 top1 0.211 ce 6.438 recov -4.19
+lam 0.1 k 22 S->T   R2 0.452 KL 1.957 acc 0.419 top1 0.399 ce 4.520 recov -1.62
+lam 0.1 k 22 T0->T  R2 0.244 KL 4.510 acc 0.213 top1 0.192 ce 7.065 recov -5.02
+lam 0.1 k 24 S->T   R2 0.540 KL 2.746 acc 0.391 top1 0.362 ce 5.322 recov -2.69
+lam 0.1 k 24 T0->T  R2 0.289 KL 6.658 acc 0.191 top1 0.168 ce 9.253 recov -7.95
+total 441s
