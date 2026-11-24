@@ -1,6 +1,6 @@
 # Preregistration — E1: When can a language model's upper layers use another model's state?
 
-Status: **DRAFT** — to be frozen (commit message "FREEZE E1 prereg") before any confirmatory cell is run. Pilot data
+Status: **FROZEN** (commit "FREEZE E1 prereg") before any confirmatory cell was run. Pilot data
 (`logs/pilot_*`, 70m→410m, eval seed 0, ≤ 256 fit sequences) are exploratory and are **not** reused: confirmatory
 cells use fit seeds 0–2 with n_fit = 1024 and eval sets drawn with seeds 100–102 from disjoint document pools.
 
@@ -25,7 +25,8 @@ cells use fit seeds 0–2 with n_fit = 1024 and eval sets drawn with seeds 100�
   target's final LayerNorm and unembedding".
 * **Map objective:**
   * mse: ridge onto R_k
-  * kl: KL to p_T through the frozen upper blocks, 300 steps
+  * kl: ridge init + scale-aware affine correction trained on KL to p_T through the frozen upper blocks
+    (200 steps, Adam lr 3e-3 cosine, batch 8×128, n_fit = 512 sequences)
 * **Self baselines (target's own prefix):**
   * self:1 → k with the kl objective, for each k
   * self:0 (embeddings only) → k
@@ -55,6 +56,21 @@ cells use fit seeds 0–2 with n_fit = 1024 and eval sets drawn with seeds 100�
   * The self:1 stitch costs one target block. Every source here costs ≥ 1 target block at 410m scale
     (70m costs about 0.25 of a 410m block plus its head), so FLOP-matching is reported, not imposed.
   * Prediction: self:1 achieves lower KL than 70m→410m at k ≤ 12.
+
+## Compute budget (fixed after pilots, before freeze)
+* **Pilot cost:** 4.8 s/step at k = 12 for 410m, so a 200-step kl cell costs about 6–25 min depending on k.
+* **Confirmatory cells, in run order:**
+  1. **Core grid, seed 0:** 3 pairs × k ∈ {6, 12, 18, 24} × {mse, kl}.
+  2. **Self baselines, seed 0:**
+     * self:1 → k, kl
+     * self:0 → k, mse and kl at k = 6
+  3. **Seeds 1 and 2:** kl at k = 12 for all 3 pairs, plus kl at k = 24 for 70m→410m and the sibling.
+  4. **Convergence check:** 70m→410m, k = 12, kl, 600 steps, n_fit = 1024, seed 0. This addresses
+     whether "fails" reflects under-training. It is reported separately and does not replace the
+     200-step cell in the primary test.
+  5. **If budget remains:** the 1b replication arm (160m→1b, 410m→1b at k ∈ {4, 8, 12, 16}, kl, seed 0).
+* **Primary-test scope and seed caveat:** the primary test Δ_k uses all available seeds for each cell.
+  Seed-0-only cells are labelled single-seed, and their CIs reflect sequence-level sampling only.
 
 ## Statistics
 * **Unit:** the evaluation sequence (64 sequences × 126 positions per eval set), with 3 fit/eval seeds.

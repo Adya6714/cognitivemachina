@@ -31,6 +31,8 @@ PYTHIA = {
     "410m": "EleutherAI/pythia-410m",
     "1b": "EleutherAI/pythia-1b",
     "1.4b": "EleutherAI/pythia-1.4b",
+    "410m-deduped": "EleutherAI/pythia-410m-deduped",
+    "160m-deduped": "EleutherAI/pythia-160m-deduped",
 }
 
 
