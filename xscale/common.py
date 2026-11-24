@@ -93,12 +93,17 @@ def make_sequences(source: str, n_seqs: int, seq_len: int, split: str, seed: int
         texts = (arts[int(i)] for i in rng.permutation(len(arts)))
     else:
         raise ValueError(source)
+    # One window per document for the Pile; WikiText-103 test has only ~60 long articles, so up to two
+    # non-overlapping windows per article are taken there (deviation D1, logged before any confirmatory result).
+    per_doc = 2 if source == "wiki" else 1
     out = []
     for t in texts:
         ids = tok(t)["input_ids"]
-        if len(ids) < seq_len - 1:
-            continue
-        out.append([BOS_ID] + ids[: seq_len - 1])
+        for w in range(per_doc):
+            chunk = ids[w * (seq_len - 1): (w + 1) * (seq_len - 1)]
+            if len(chunk) < seq_len - 1 or len(out) == n_seqs:
+                break
+            out.append([BOS_ID] + chunk)
         if len(out) == n_seqs:
             break
     if len(out) < n_seqs:
