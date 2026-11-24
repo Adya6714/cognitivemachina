@@ -88,3 +88,53 @@ cells use fit seeds 0–2 with n_fit = 1024 and eval sets drawn with seeds 100�
   failure" and rerun once at lr/3. Both runs are reported.
 * **Budget stop:** if the compute budget runs out, the 1b replication arm is dropped first, then seeds 1–2
   of the mse cells. Dropped cells are listed in the report.
+
+---
+## Amendments (post-freeze, **pre-result**), 2026-11-24, in response to the adversarial design review
+These amendments were written after the freeze. When they were written, exactly one confirmatory cell
+(`S70m_T410m_k6_mse_s0`) existed. It was not inspected beyond its one-line log, and no KL cell had finished.
+All frozen tests are still reported exactly as frozen. The amendments add tests and controls; they do not
+replace any frozen test.
+
+* **A1 (review issue 1, fatal: comparator).**
+  * **The problem:** Δ_k compares against the source's own distribution, but an affine map into the
+    target's head may be unable to reproduce p_S at all. That is a read-out bottleneck, not a statement
+    about upper-layer usefulness.
+  * **New co-primary outcome for H1:** D_k = KL(p_T‖q_L) − KL(p_T‖q_k) for k < L, with both stitches
+    trained with the kl objective. This is the theory's own comparator, G(L) − G(k), from
+    `03_theory.md` Prop. 2. H1 is supported for a pair if some k < L has D_k > 0 with a 95% CI excluding 0.
+  * **Δ_k is retained**, but relabelled as the *practical drafting* outcome: is the stitched model a
+    better drafter than the source alone?
+  * **Read-out calibration cells:** k = 24, with the map trained to reproduce p_S (`--train_to source`).
+    They report KL(p_S‖q), which measures how much of the source's own distribution an affine map plus
+    the target head can express.
+* **A2 (issue 2: size ratio confounded with data).** Add PolyPythias `pythia-410m-seed1` → 410m. This
+  pair has the same data and architecture and a different seed (arXiv 2503.09543). It is the
+  equal-size control. The deduped sibling becomes a "same size, different data" condition.
+* **A3 (issue 2).** Identity stitches (no training) for equal-width pairs at k ∈ {12, 24}. They test for
+  shared coordinate systems, for example from a shared initialisation.
+* **A4 (issue 4).** The pre-update (step-0) training loss is logged and maps are saved. This makes the
+  divergence rule applicable.
+* **A5 (issue 5).** A convergence check is added for the sibling as well (600 steps, n_fit = 1024). The
+  under-training caveat is stated for every kl conclusion.
+* **A6 (issue 11, FLOPs).** FLOP accounting is corrected:
+  * The source head is excluded, because the stitch does not use it.
+  * The prereg statement that "70m costs ≈ 0.25 target blocks" was wrong. 70m's six blocks cost ≈ 1.5
+    blocks of 410m.
+  * self:2 (two target blocks) is added as the FLOP-matched self baseline.
+  * The FLOP field of the already-run mse cell is recomputed in analysis.
+  * Pairs whose stitch costs more than the target (the siblings) are excluded from H2 claims.
+* **A7 (issue 9).** A single-position diagnostic (`xscale/diag_single_pos.py`) replaces one position at a
+  time, keeping the target's own states elsewhere. This separates per-token mismatch from
+  attention-context corruption.
+* **Statistics (issues 7, 8):**
+  * H-dissociation is downgraded to *descriptive*. Representational metrics are taken from mse cells.
+    CKA is map-free.
+  * Unadjusted p-values are reported alongside Holm-adjusted ones.
+  * Confirmation criterion for "70m: Δ_k < 0 at all k": the upper 95% CI bound is < 0 at every k.
+  * Single-seed cells are labelled as such, and their CIs exclude map-fit variance.
+* **H-objective (issue 6).** It is relabelled as a descriptive effect size: how much of the gap is
+  attributable to the fitting objective. It is not a mechanistic test.
+* **Prereg inconsistency (issue 3).** The background section says n_fit = 1024. The budget section and
+  the queue use 512, and 512 is binding.
+* **Deviation D3.** The run order is changed so that A1–A7 precede the extra seeds and the 1b arm.

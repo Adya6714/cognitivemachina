@@ -14,3 +14,4 @@
 | 10 | 2026-11-24 | Prior-art audit returned: closest work 2506.06609; contradiction 2608.09521 (works) vs 2606.03280/2603.18908 (fails). Selected X1 (rank 1, 7.75) | See 04_ranking.md | — |
 | 11 | 2026-11-24 | Budget reduction fixed before freeze (seed 0 full grid; seeds 1–2 for key cells; convergence check) | 4.8 s/step at k=12 on CPU | Full 3-seed grid (~20 h) |
 | 12 | 2026-11-24 | **Deviation D1** (before any confirmatory result): WikiText eval loader crashed (61 < 64 single-window articles). Use up to 2 non-overlapping windows per article for WikiText only | Data-loader bug; does not touch primary (Pile) outcome | Reduce n_eval (would change the frozen eval size) |
+| 13 | 2026-11-24 | Adversarial design review (Agent 8): 1 fatal, 10 major. Adopted amendments A1–A7 before any KL result existed; queue v2 reorders controls ahead of extra seeds (D3) | Fatal comparator issue would have made Δ_k uninterpretable for H1 | Proceeding with frozen design only |

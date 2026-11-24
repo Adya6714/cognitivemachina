@@ -7,12 +7,14 @@ Objectives:
   mse  ridge regression onto the target residual R_k (closed form, lambda_rel = 1e-3)
   kl   ridge initialisation + scale-aware affine correction trained on KL(p_T || p_stitched)
        through the frozen target blocks k..L (Adam, lr 3e-3, batch 8 x 128 tokens)
-Outputs JSON with: per-sequence mean metrics for stitched / source-alone / target, representational
-similarity (held-out R^2 of the ridge map, linear CKA) and FLOP accounting.
+Outputs JSON with: per-sequence mean metrics for stitched / source-alone / target, held-out R^2 of the
+*cell's own map* (ridge for mse cells, trained map for kl cells — representational analyses use mse cells),
+linear CKA (map-free) and FLOP accounting. Maps are saved to runs/E1/<cell>.pt.
 """
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 import time
 
@@ -27,7 +29,8 @@ p = argparse.ArgumentParser()
 p.add_argument("--src", required=True)
 p.add_argument("--tgt", required=True)
 p.add_argument("--k", type=int, required=True)
-p.add_argument("--obj", choices=["mse", "kl"], required=True)
+p.add_argument("--obj", choices=["mse", "kl", "id"], required=True)  # id = identity map (equal widths only; amendment A3)
+p.add_argument("--train_to", choices=["target", "source"], default="target")  # source = read-out calibration (amendment A1)
 p.add_argument("--seed", type=int, default=0)
 p.add_argument("--n_fit", type=int, default=512)
 p.add_argument("--n_eval", type=int, default=64)
@@ -55,7 +58,7 @@ if a.src.startswith("S:"):
     def source(ids, RT=None):
         R, logits = residuals(S, ids)
         return S.gpt_neox.final_layer_norm(R[LS]), logits
-    src_flops = LS * block_flops_per_token(S, a.seq) + head_flops_per_token(S)
+    src_flops = LS * block_flops_per_token(S, a.seq)  # source head is not used by the stitch (amendment A6)
 else:
     m = int(a.src.split(":")[1])
     assert m < a.k
@@ -83,7 +86,7 @@ for i in range(0, a.n_fit, B):
         acc = RidgeAcc(X.shape[-1], RT[a.k].shape[-1])
     acc.add(X[:, 1:], RT[a.k][:, 1:])
     if a.obj == "kl":
-        cache.append((X.clone(), RT[a.k].clone()))
+        cache.append((X.clone(), RT[a.k].clone(), ids))
     del RT
 W0, b0 = acc.solve(1e-3)
 mx, my, Cxx, _, vy = acc.centered()
@@ -102,17 +105,22 @@ if a.obj == "kl":
     g = torch.Generator().manual_seed(a.seed)
     with torch.enable_grad():
         for step in range(1, a.steps + 1):
-            X, RTk = cache[int(torch.randint(len(cache), (1,), generator=g))]
+            X, RTk, ids_b = cache[int(torch.randint(len(cache), (1,), generator=g))]
             with torch.no_grad():
-                lp = torch.log_softmax(run_upper(T, RTk, a.k), -1)
+                lp = torch.log_softmax(run_upper(T, RTk, a.k) if a.train_to == "target" else source(ids_b)[1], -1)
             H = mapf(X)
             H = torch.cat([RTk[:, :1], H[:, 1:]], 1)
             lq = torch.log_softmax(run_upper(T, H, a.k), -1)
             loss = (lp.exp() * (lp - lq)).sum(-1)[:, 1:].mean()
+            if step == 1:
+                train_log.append((0, round(loss.item(), 4)))  # pre-update loss (amendment A4)
             opt.zero_grad(); loss.backward(); opt.step(); sched.step()
             if step % 25 == 0:
                 train_log.append((step, round(loss.item(), 4)))
     del cache
+if a.obj == "id":
+    assert W0.shape[0] == W0.shape[1]
+    mapf = lambda X: X  # noqa: E731
 
 
 # ---- evaluation
@@ -137,6 +145,8 @@ for name, ev in evs.items():
         Xs.append(X[:, 1:].reshape(-1, X.shape[-1])); Ys.append(RT[a.k][:, 1:].reshape(-1, RT[a.k].shape[-1]))
         Ps.append(H[:, 1:].reshape(-1, H.shape[-1]))
         n_pos = ids.shape[1] - 2
+        if lS is not None:
+            per["stitched"].setdefault("kl_to_source", []).extend(token_metrics(lS, lq, ids)["kl"].view(-1, n_pos).mean(1).tolist())
         for tag, lg in [("stitched", lq), ("source", lS), ("target", lT)]:
             if lg is None:
                 continue
@@ -152,6 +162,9 @@ for name, ev in evs.items():
                                 eval_hash=seq_hash(ev))
 result["seconds"] = round(time.time() - t_start, 1)
 save_json(result, a.out)
+os.makedirs("runs/E1", exist_ok=True)  # maps saved for post-hoc diagnostics (amendment A4)
+torch.save(dict(W0=W0, b0=b0, M=M.detach(), c=c.detach(), mx=mx, sx=sx, sy=sy, obj=a.obj),
+           os.path.join("runs/E1", os.path.basename(a.out).replace(".json", ".pt")))
 pe = result["eval"]["pile"]["per_seq"]
 mean = lambda v: sum(v) / len(v)
 print(a.src, "->", a.tgt, "k", a.k, a.obj, "seed", a.seed,
