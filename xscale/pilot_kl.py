@@ -7,6 +7,7 @@ from xscale.ridge import RidgeAcc
 
 S_name, T_name, k, steps = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])
 torch.manual_seed(0)
+torch.set_num_threads(4)
 S, T = load(S_name), load(T_name)
 for p in list(S.parameters()) + list(T.parameters()):
     p.requires_grad_(False)
@@ -19,7 +20,8 @@ for i in range(0, len(fit), 8):
     b = fit[i:i + 8]
     RS, _ = residuals(S, b); RT, lT = residuals(T, b)
     acc.add(RS[LS][:, 1:], RT[k][:, 1:])
-    cache.append((RS[LS], RT[k][:, :1].clone(), torch.log_softmax(lT, -1)))
+    cache.append((RS[LS], RT[k][:, :1].clone(), RT[k]))
+    del RS, RT, lT
 W0, b0 = acc.solve(1e-3)
 W = torch.nn.Parameter(W0.clone()); bb = torch.nn.Parameter(b0.clone())
 opt = torch.optim.Adam([W, bb], lr=1e-4)
@@ -36,7 +38,9 @@ print("step 0", evaluate(), flush=True)
 t0 = time.time()
 with torch.enable_grad():
     for step in range(1, steps + 1):
-        XS, h0, lpT = cache[step % len(cache)]
+        XS, h0, RTk = cache[step % len(cache)]
+        with torch.no_grad():
+            lpT = torch.log_softmax(run_upper(T, RTk, k), -1)
         H = XS @ W + bb
         H = torch.cat([h0, H[:, 1:]], 1)
         lq = torch.log_softmax(run_upper(T, H, k), -1)

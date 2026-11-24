@@ -36,7 +36,7 @@ PYTHIA = {
 
 def load(name: str, revision: str | None = None):
     repo = PYTHIA.get(name, name)
-    m = AutoModelForCausalLM.from_pretrained(repo, revision=revision, torch_dtype=torch.float32)
+    m = AutoModelForCausalLM.from_pretrained(repo, revision=revision, dtype=torch.float32)
     m.eval()
     return m
 
