@@ -17,7 +17,7 @@ for f in sorted(glob.glob("results/E1/*.json")):
 
 
 def parse(name):
-    m = re.match(r"(S(?P<src>[\w.\-]+?)|self(?P<self>\d))_T(?P<tgt>[\w.]+)_k(?P<k>\d+)_(?P<obj>mse|kl)_s(?P<seed>\d)(?P<long>_long)?$", name)
+    m = re.match(r"(S(?P<src>[\w.\-]+?)|self(?P<self>\d))_T(?P<tgt>[\w.]+)_k(?P<k>\d+)_(?P<obj>mse|kl|klsrc|id)_s(?P<seed>\d)(?P<long>_long)?$", name)
     d = m.groupdict()
     return dict(src=d["src"] or f"self{d['self']}", tgt=d["tgt"], k=int(d["k"]), obj=d["obj"],
                 seed=int(d["seed"]), long=bool(d["long"]))
@@ -52,7 +52,9 @@ for key, lst in sorted(groups.items()):
     out = {"seeds": [s for s, _ in lst]}
     for ev in ["pile", "wiki"]:
         res = {}
-        for metric in ["kl", "acc", "top1", "ce"]:
+        for metric in ["kl", "acc", "top1", "ce", "kl_to_source"]:
+            if metric not in lst[0][1]["eval"][ev]["per_seq"]["stitched"]:
+                continue
             g = [per_seq(c, ev, "stitched", metric) for _, c in lst]
             res[f"stitched_{metric}"] = boot_mean_ci(g)[:3]
             if "source" in lst[0][1]["eval"][ev]["per_seq"]:
@@ -72,7 +74,7 @@ for key, lst in sorted(groups.items()):
     summary["cells"]["|".join(map(str, key))] = out
 
 # ---- H-ratio: Delta_k > 0 tests with Holm over pairs x depths (kl objective, 200-step cells)
-pairs = ["70m", "160m", "410m-deduped"]
+pairs = ["70m", "160m", "410m-deduped", "410m-seed1"]
 tests = []
 for src in pairs:
     for k in [6, 12, 18, 24]:
@@ -88,6 +90,29 @@ for rank, i in enumerate(order):
     running = max(running, adj)
     tests[i]["p_holm"] = running
 summary["tests"]["H_ratio"] = tests
+
+# ---- A1 co-primary: D_k = KL(q_24) - KL(q_k), paired on the same eval sequences (kl objective)
+dtests = []
+for src in pairs:
+    g24 = {s: c for s, c in groups.get((src, "410m", 24, "kl", False), [])}
+    for k in [6, 12, 18]:
+        gk = {s: c for s, c in groups.get((src, "410m", k, "kl", False), [])}
+        seeds = sorted(set(g24) & set(gk))
+        if not seeds:
+            continue
+        d = [per_seq(g24[s], "pile", "stitched", "kl") - per_seq(gk[s], "pile", "stitched", "kl") for s in seeds]
+        est, lo, hi, pv = boot_mean_ci(d)
+        dtests.append(dict(src=src, k=k, est=est, lo=lo, hi=hi, p=pv, seeds=seeds))
+summary["tests"]["D_k"] = dtests
+
+# ---- A1 read-out calibration
+cal = []
+for src in pairs:
+    c = summary["cells"].get("|".join(map(str, (src, "410m", 24, "klsrc", False))))
+    if c:
+        cal.append(dict(src=src, kl_to_source=c["pile"]["stitched_kl_to_source"][0], kl_to_target=c["pile"]["stitched_kl"][0],
+                        source_kl_to_target=c["pile"]["source_kl"][0]))
+summary["tests"]["readout_calibration"] = cal
 
 # ---- H-objective: KL(mse)/KL(kl) at k=12
 hobj = []
@@ -151,5 +176,11 @@ for t in hdis:
 L += ["", "## H-self", "", "| k | self:1 KL | 70m KL | self:1 GFLOP/token | 70m-stitch GFLOP/token |", "|---|---|---|---|---|"]
 for t in hself:
     L.append(f"| {t['k']} | {t['self1_kl']:.3f} | {t['s70m_kl']:.3f} | {t['self1_flops']/1e9:.3f} | {t['s70m_flops']/1e9:.3f} |")
+L += ["", "## A1 co-primary: D_k = KL(p_T‖q_24) − KL(p_T‖q_k) (kl objective; > 0 means the upper blocks add value beyond a linear read-out)", "", "| source | k | D_k | 95% CI | one-sided p | seeds |", "|---|---|---|---|---|---|"]
+for t in dtests:
+    L.append(f"| {t['src']} | {t['k']} | {t['est']:.3f} | [{t['lo']:.3f}, {t['hi']:.3f}] | {t['p']:.4f} | {t['seeds']} |")
+L += ["", "## A1 read-out calibration (k = 24 map trained to reproduce p_S)", "", "| source | KL(p_S‖q) | KL(p_T‖q) | KL(p_T‖p_S) |", "|---|---|---|---|"]
+for t in cal:
+    L.append(f"| {t['src']} | {t['kl_to_source']:.3f} | {t['kl_to_target']:.3f} | {t['source_kl_to_target']:.3f} |")
 open("results/E1_tables.md", "w").write("\n".join(L) + "\n")
 print("\n".join(L))
