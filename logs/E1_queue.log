@@ -62,3 +62,7 @@ S:160m -> 410m k 12 kl seed 2 | KL stitched 1.205 | KL source 0.492 | R2 0.232 C
 S:410m-deduped -> 410m k 12 kl seed 2 | KL stitched 0.880 | KL source 0.328 | R2 0.309 CKA 0.418 | 1391.6s
 S:70m -> 410m k 24 kl seed 2 | KL stitched 1.671 | KL source 0.867 | R2 0.413 CKA 0.553 | 611.0s
 S:410m-deduped -> 410m k 24 kl seed 2 | KL stitched 0.702 | KL source 0.328 | R2 0.598 CKA 0.809 | 718.5s
+S:410m-deduped -> 410m k 24 kl seed 0 | KL stitched 0.682 | KL source 0.311 | R2 0.610 CKA 0.810 | 801.7s
+S:70m -> 410m k 24 kl seed 0 | KL stitched 1.674 | KL source 0.830 | R2 0.412 CKA 0.329 | 540.2s
+S:160m -> 410m k 24 kl seed 0 | KL stitched 1.124 | KL source 0.474 | R2 0.481 CKA 0.543 | 710.7s
+S:70m -> 410m k 12 kl seed 0 | KL stitched 1.379 | KL source 0.830 | R2 0.208 CKA 0.312 | 3313.1s
