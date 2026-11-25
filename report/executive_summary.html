@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Cross-Scale Stitching Summary</title>
+<style>
+@page { size: A4; margin: 16mm 15mm 16mm 15mm; }
+:root { --ink:#1b1f24; --mute:#59636e; --rule:#d0d7de; --accent:#0b5cad; --bg:#ffffff; --soft:#f3f6f9; }
+body { font-family: "Helvetica Neue", Arial, sans-serif; color:var(--ink); background:var(--bg); font-size:9.6pt; line-height:1.38; margin:0; }
+h1 { font-size:17pt; margin:0 0 2pt; line-height:1.2; }
+h2 { font-size:11.5pt; color:var(--accent); margin:12pt 0 4pt; border-bottom:1px solid var(--rule); padding-bottom:2pt; }
+h3 { font-size:10pt; margin:8pt 0 3pt; }
+.sub { color:var(--mute); font-size:9pt; margin-bottom:8pt; }
+.box { background:var(--soft); border-left:3px solid var(--accent); padding:6pt 9pt; margin:6pt 0; }
+.decision { font-weight:700; font-size:11pt; }
+table { border-collapse:collapse; width:100%; font-size:8.4pt; margin:4pt 0 6pt; }
+th, td { border:1px solid var(--rule); padding:2.5pt 4pt; text-align:left; vertical-align:top; }
+th { background:var(--soft); }
+td.n { text-align:right; font-variant-numeric: tabular-nums; white-space:nowrap; }
+figure { margin:6pt 0; text-align:center; page-break-inside:avoid; }
+figure img { max-width:100%; max-height:62mm; }
+figcaption { font-size:8pt; color:var(--mute); text-align:left; margin-top:2pt; }
+ul { margin:2pt 0 4pt 14pt; padding:0; } li { margin:1pt 0; }
+code, pre { font-family: Menlo, Consolas, monospace; font-size:8pt; }
+pre { background:var(--soft); padding:5pt 7pt; white-space:pre-wrap; margin:4pt 0; }
+.pb { page-break-before:always; }
+.tag { display:inline-block; font-size:7.5pt; padding:0 4pt; border-radius:3px; border:1px solid var(--rule); color:var(--mute); }
+.refs li { font-size:8pt; }
+</style></head><body>
+
+<h1>Where is a smaller model's state usable inside a larger one?</h1>
+<div class="sub">Cross-scale stitching in Pythia: injection depth × size ratio × fitting objective. Executive summary (D7) ·
+25 Nov 2026 · Full report: <code>docs/09_main_report.md</code> · Repository branch <code>claude/research-programme</code></div>
+
+<div class="box"><span class="decision">Decision: PRELIMINARY FINDING.</span>
+For sources much smaller than the target (70m, 160m → 410m), the target's last quarter of blocks reads out the injected state
+better than the target's own head. For equal-size siblings this never happens. But no affinely-stitched model approximates
+the target as well as the small model alone, so frozen latent injection gives <b>no drafting speed-up</b> at this scale.</div>
+
+<h2>1. Executive summary</h2>
+<ul>
+<li><b>Question.</b> When does mapping a source model's final hidden state affinely into a target's residual stream at depth
+<i>k</i>, then running the target's frozen remaining blocks, produce predictions closer to the target's than (a) a linear read-out
+through the target's head, and (b) the source model itself?</li>
+<li><b>Design.</b> One model family (Pythia, shared tokenizer and data order); sources 70m, 160m, 410m-deduped, 410m-seed1;
+target 410m (24 blocks); depths 6/12/18/24; ridge vs KL-trained maps; 78 cells; frozen preregistration with disclosed amendments.</li>
+<li><b>Main finding.</b> D<sub>18</sub> (gain of depth-18 injection over linear read-out) = <b>+0.136</b> nats/token for 70m
+(seed-level 95% CI [0.074, 0.198], 3 seeds), +0.111 on WikiText, +0.121 with 3× longer map training, and replicated by independent
+code (70m→160m: +0.254). 160m: +0.072 [0.015, 0.129]. Equal-size siblings: no depth with D<sub>k</sub> &gt; 0.</li>
+<li><b>Practical result.</b> Every stitch is worse than the source alone (Δ<sub>k</sub> &lt; 0 in 16/16 tests). The preregistered
+prediction that an equal-size sibling would beat its own source is <b>falsified</b>.</li>
+<li><b>Secondary study (X3).</b> Real speculative sampling, 70m drafting for 410m: the textbook i.i.d. throughput formula is
+accurate to 0.6–6%: a negative result for the hypothesised large dependence error.</li>
+</ul>
+
+<h2>2. Main finding</h2>
+<figure><img src="../figures/fig2_dk.png" alt="Bar chart of D_k by depth for four sources on Pile and WikiText">
+<figcaption><b>Figure 1.</b> D<sub>k</sub> = KL(p<sub>T</sub>‖q<sub>24</sub>) − KL(p<sub>T</sub>‖q<sub>k</sub>); positive means
+injecting at depth k beats a linear read-out of the same source. Only the smaller sources have an interior depth with
+D &gt; 0, at k = 18. Error bars: seed-level t intervals (3 seeds) or sequence bootstrap (1 seed). Stars: 600-step maps.</figcaption></figure>
+
+<h2>3. Claims and evidence</h2>
+<table>
+<tr><th>Claim</th><th>Evidence</th><th>Strength</th><th>Status</th></tr>
+<tr><td>70m→410m: depth 18 beats linear read-out</td><td>3 seeds; Pile + WikiText; 600-step check; independent replication</td><td>Strong (within setting)</td><td>Demonstrated</td></tr>
+<tr><td>160m→410m: same</td><td>3 seeds, Pile CI &gt; 0; WikiText CI includes 0; 600-step: {{160L}}</td><td>Moderate</td><td>Supported indirectly</td></tr>
+<tr><td>Equal-size siblings never benefit</td><td>2 siblings, all depths</td><td>Strong for 2 pairs</td><td>Demonstrated</td></tr>
+<tr><td>No affine stitch beats the source alone</td><td>16/16 CIs &lt; 0; replication</td><td>Strong</td><td>Demonstrated</td></tr>
+<tr><td>KL objective &lt; 1.5× better than ridge</td><td>1.30–1.35× (200 steps); 1.49–1.62× (600)</td><td>Budget-dependent</td><td>Supported indirectly</td></tr>
+<tr><td>Similarity (CKA, R²) peaks at read-out; function interior</td><td>4 pairs, descriptive</td><td>Weak–moderate</td><td>Exploratory</td></tr>
+<tr><td>Target's own 1st layer beats 70m stitch early</td><td>k = 6: +0.84; tie at k = 12</td><td>Strong at k = 6</td><td>Demonstrated (k = 6)</td></tr>
+<tr><td>Read-out bottleneck</td><td>Head + affine map cannot reproduce p<sub>S</sub> (KL 0.48–0.89)</td><td>Moderate</td><td>Supported indirectly</td></tr>
+<tr><td>Second target (1b)</td><td>{{1B}}</td><td>Single seed</td><td>Not yet established</td></tr>
+<tr><td>i.i.d. speculative formula accurate to ~6%</td><td>Real sampling, 3 draft lengths</td><td>Moderate</td><td>Demonstrated (negative)</td></tr>
+</table>
+
+<h2>4. Novelty</h2>
+<p>Novelty audit class <b>N2–N3</b> (new controlled design, incremental finding). Recent work disagrees on whether injected
+cross-model states are usable mid-depth (2608.09521 "works"; 2606.03280 and 2603.18908 "fail"), but each paper varies depth,
+size ratio, objective and metric together. New here: (i) a factorial over size ratio × depth × objective in one family;
+(ii) the read-out comparator D<sub>k</sub>, which isolates the contribution of the target's upper blocks; (iii) the finding that
+the last quarter beats the head <i>only</i> for much-smaller sources. Not claimed as new: stitching itself (Bansal 2021; Chen 2025),
+KL-trained maps, or similarity–function dissociation in general.</p>
+
+<h2>5. Results</h2>
+<figure><img src="../figures/fig1_kl_by_depth.png" alt="Stitched KL by depth for each source, and MSE versus KL maps">
+<figcaption><b>Figure 2.</b> Left: KL(p<sub>T</sub>‖q<sub>k</sub>) with KL-trained maps; dotted lines are the source model alone, which
+every stitch fails to beat. Right: ridge/MSE maps (solid) are 1.3–1.6× worse; under MSE every pair, siblings included, has its
+optimum at k = 18.</figcaption></figure>
+<table>
+<tr><th>Source → 410m</th><th>k=6</th><th>k=12</th><th>k=18</th><th>k=24</th><th>source alone</th><th>D<sub>18</sub> [seed-level CI]</th></tr>
+<tr><td>70m</td><td class="n">1.739</td><td class="n">1.587</td><td class="n"><b>1.527</b></td><td class="n">1.663</td><td class="n">0.847</td><td class="n">+0.136 [0.074, 0.198]</td></tr>
+<tr><td>160m</td><td class="n">1.456</td><td class="n">1.199</td><td class="n"><b>1.044</b></td><td class="n">1.116</td><td class="n">0.486</td><td class="n">+0.072 [0.015, 0.129]</td></tr>
+<tr><td>410m-deduped</td><td class="n">1.090</td><td class="n">0.877</td><td class="n">0.717</td><td class="n"><b>0.689</b></td><td class="n">0.319</td><td class="n">−0.028 [−0.034, −0.023]</td></tr>
+<tr><td>410m-seed1</td><td class="n">1.184</td><td class="n">0.969</td><td class="n">0.810</td><td class="n"><b>0.793</b></td><td class="n">0.275</td><td class="n">−0.018 (1 seed)</td></tr>
+</table>
+<div class="sub">KL(p<sub>T</sub>‖·) in nats/token on held-out Pile, 200-step KL-trained maps, mean over available seeds. Bold = best depth.</div>
+
+<h3>Controls and ablations</h3>
+<ul>
+<li><b>Training budget (adversarial review R1).</b> 3× longer training lowers KL 13–17% at every depth tested but keeps 70m's
+D<sub>18</sub> at +0.121 [0.097, 0.144]. 160m: {{160L}}.</li>
+<li><b>Same size, different data vs different seed.</b> Both siblings behave alike, so the sign change tracks size ratio, not data.</li>
+<li><b>Identity (no map).</b> Siblings share no usable coordinates (KL 3.5 and 9.5); exploratory hint of a shared initialisation.</li>
+<li><b>Target's own early layers.</b> self:1 at k = 6: 0.90 vs 1.74 for 70m; tie at k = 12; 70m stitch better at k ≥ 18.</li>
+</ul>
+<div style="display:flex; gap:8pt">
+<figure style="flex:1.6"><img src="../figures/fig3_dissociation.png" alt="Normalised CKA, R squared and negative KL by depth for four sources">
+<figcaption><b>Figure 3.</b> Similarity (CKA, R²) peaks at k = 24 for every pair; function (−KL) peaks at k = 18 for 70m and 160m.</figcaption></figure>
+<figure style="flex:1"><img src="../figures/fig4_x3.png" alt="Realised versus predicted tokens per target call in speculative sampling">
+<figcaption><b>Figure 4.</b> X3: realised tokens per target call vs the i.i.d. formula.</figcaption></figure>
+</div>
+
+<h2>6. Limitations</h2>
+<ul>
+<li>Small models (≤ 1b), one family, CPU, float32; no frontier-scale or cross-family conclusions.</li>
+<li>Affine per-position maps only; every failure is relative to that map class.</li>
+<li>Three seeds for key cells, one elsewhere; seed-level CIs are wide (n = 3). 64 evaluation sequences per set.</li>
+<li>Maps are under-trained by ~15% at 200 steps; the 600-step check covers only 70m and 160m at depths 18 and 24.</li>
+<li>The mechanism is open: D<sub>18</sub> &gt; 0 may reflect generic extra frozen capacity rather than anything about the small
+model's state (the target's own layer-1 state shows the pattern more strongly).</li>
+<li>Seeds 1–2 at k = 18 were added after seeing seed 0 (post hoc, disclosed); the preregistered seed-0 test passes alone.</li>
+<li>The 1b arm was cut under the preregistered budget rule (160m→1b at k = 4, 8, 16 only).</li>
+</ul>
+
+<h2>7. Implications</h2>
+<ul>
+<li><b>Reconciling the literature.</b> Mid-depth injection is not usable as a drafter at any size ratio here; relative to a linear
+read-out, the target's last quarter adds value only for much-smaller sources, which is consistent with "only late layers work".</li>
+<li><b>Similarity is a poor guide.</b> Choosing a stitching layer by CKA or R² picks the read-out depth, not the functional optimum.</li>
+<li><b>Latent drafting (H2).</b> A frozen small model's state, affinely mapped, is a worse drafter than the small model itself, and the
+target's own first layers beat it at early depths. Output guarantees come free from verification; efficiency does not.</li>
+</ul>
+
+<h2>8. Next three experiments</h2>
+<ol>
+<li><b>Capacity-matched read-out control:</b> give the k = 24 read-out a parameter-matched trainable adapter, and swap in unrelated
+frozen blocks, to separate "uses the small model's state" from "extra nonlinear capacity".</li>
+<li><b>Cross-family and absolute-size replication:</b> 160m→1b full grid with 3 seeds, 410m→1.4b, and a second family with a shared tokenizer.</li>
+<li><b>Training dynamics:</b> D<sub>18</sub> across Pythia checkpoints, to see when the interior advantage emerges.</li>
+</ol>
+
+<h2>9. Reproduction</h2>
+<pre>pip install -r requirements.txt            # torch 2.15 (CPU), transformers 5.24.1, scipy, matplotlib
+python3 xscale/test_injection.py           # exact-injection unit test (max |diff| = 0)
+python3 xscale/run_cell.py --src S:70m --tgt 410m --k 18 --obj kl --seed 0 \
+        --out results/E1/S70m_T410m_k18_kl_s0.json   # one cell, ~15 min on 4 cores
+./xscale/queue_E1_v2.sh; ./xscale/queue_E1_A8.sh; ./xscale/queue_R1.sh   # all cells (~25 CPU-h, resumable)
+python3 xscale/analyse_E1.py; python3 xscale/figures_E1.py               # tables + figures</pre>
+<p>Every result file stores its configuration, eval-set hash, training log, FLOPs and per-sequence metrics. All deviations and
+decisions are in <code>docs/00_decision_log.md</code>; the independent replication is in <code>replication/</code>.</p>
+
+<h2>10. References</h2>
+<ul class="refs">
+<li>Bansal, Nakkiran, Barak (2021). Revisiting model stitching to compare neural representations. arXiv:2106.07682.</li>
+<li>Chen, Merullo, Stolfo, Pavlick (2025). arXiv:2506.06609 (cross-scale stitching of Pythia models).</li>
+<li>arXiv:2608.09521 (mid-depth cross-family injection into a frozen back model).</li>
+<li>arXiv:2606.03280 (Pythia-160m → 410m replacement injection on multi-hop QA).</li>
+<li>arXiv:2603.18908 (cross-family linear maps work only in the last layers).</li>
+<li>Leviathan, Kalman, Matias (2023). Fast inference from transformers via speculative decoding. arXiv:2211.17192.</li>
+<li>Chen et al. (2023). Accelerating large language model decoding with speculative sampling. arXiv:2302.01318.</li>
+<li>Li et al. (2025). EAGLE-3. arXiv:2503.01840.</li>
+<li>van der Wal et al. (2025). PolyPythias. arXiv:2503.09543.</li>
+<li>Biderman et al. (2023). Pythia: a suite for analyzing LLMs across training and scaling. arXiv:2304.01373.</li>
+<li>Kornblith, Norouzi, Lee, Hinton (2019). Similarity of neural network representations revisited. ICML.</li>
+</ul>
+</body></html>
