@@ -55,3 +55,6 @@ S:70m -> 410m k 12 kl seed 1 | KL stitched 1.588 | KL source 0.845 | R2 0.212 CK
 S:160m -> 410m k 12 kl seed 1 | KL stitched 1.195 | KL source 0.493 | R2 0.228 CKA 0.391 | 1205.8s
 S:410m-deduped -> 410m k 12 kl seed 1 | KL stitched 0.879 | KL source 0.319 | R2 0.308 CKA 0.456 | 1335.1s
 S:70m -> 410m k 24 kl seed 1 | KL stitched 1.634 | KL source 0.845 | R2 0.395 CKA 0.236 | 533.5s
+HTTP Error 429 thrown while requesting GET https://huggingface.co/api/models/EleutherAI/pythia-70m/tree/main/additional_chat_templates
+S:410m-deduped -> 410m k 24 kl seed 1 | KL stitched 0.682 | KL source 0.319 | R2 0.611 CKA 0.817 | 862.6s
+S:70m -> 410m k 12 kl seed 2 | KL stitched 1.575 | KL source 0.867 | R2 0.235 CKA 0.413 | 1253.6s
