@@ -1,8 +1,8 @@
 # Study guide: the whole programme, in and out
 
-*Snapshot: 2026-11-25, 05:15 UTC. 33 of about 80 planned E1 cells are complete. Everything below that rests on
-E1 numbers is **interim**. Final numbers will come from `results/E1_tables.md` after the queue finishes. Every
-number here was copied from a result file in this repo. Nothing is projected.*
+*Updated 2026-11-25 evening, after all E1 cells, the results-stage review and the R1 convergence check.
+Sections 7 and 11 keep the interim snapshot (33 cells) for the record. **Section 13 has the final results and
+supersedes them.** Every number was copied from a result file in this repo. Nothing is projected.*
 
 ---
 
@@ -35,8 +35,9 @@ number here was copied from a result file in this repo. Nothing is projected.*
    preregistered 1.5× threshold.
 9. **Secondary study X3 (negative).** The textbook i.i.d. speculative-decoding formula predicts real 70m → 410m
    speculative sampling within about 6%.
-10. **Status.** About 47 cells remain (about 11 h of CPU). The results-stage adversarial review and final
-    deliverables come after.
+10. **Final decision: PRELIMINARY FINDING.** The 70m depth-18 effect held across 3 seeds, WikiText, and maps
+    trained 3× longer (+0.121). An independent results-stage reviewer agreed with the label. See section 13 and
+    `docs/12_final_deliverables.md`.
 
 ---
 
@@ -51,6 +52,7 @@ reasoning:
 |---|---|---|---|---|
 | Agent 2 | Literature / prior-art investigator | 2026-11-24 19:03 | Searched about 90 queries on the arXiv API and OpenAlex (Semantic Scholar was rate-limited), plus forward-citation crawls. It read about 60 papers, some only in targeted sections. It built the literature matrix and assigned a novelty class N0–N5 to each candidate. It was told never to cite a paper it had not retrieved. | `docs/02_literature_matrix.md` |
 | Agent 8 | Adversarial reviewer (design stage) | 2026-11-24 20:24 | Tried to break the frozen E1 design. It found 18 issues: 1 fatal, 10 major, 7 minor. The fatal one: the primary comparator Δ_k (stitch vs source alone) cannot test H1, because the affine-plus-head read-out may not reproduce the source at all. | `docs/06_adversarial_review_design.md` |
+| Agent 8 (fresh instance) | Adversarial reviewer (results stage) | 2026-11-25 17:45 | Read all results and code without running anything heavy. Raised 15 issues. The key one was R1: D_18 > 0 might be an artefact of under-trained k = 24 maps. Others: CIs omitted seed variance (R3); post-hoc seeds were unlabelled (R4); the FLOP statement was wrong (R9); the context-corruption decomposition was invalid (R10). Verdict: PRELIMINARY FINDING. | `docs/10_adversarial_review_results.md` |
 | Agent 10 | Independent replication | 2026-11-25 00:40 → about 04:00 | Wrote new code from scratch and was forbidden from reading `xscale/` or `results/`. It used a different target (160m), different fit data (WikiText-103), different seeds (7, 8) and its own hyperparameters. It unit-tested its injection (bit-exact) and replicated both core claims. | `replication/REPORT.md` |
 
 **Carried out by me, the Research Director, in the main session.** These roles were not separate processes,
@@ -63,8 +65,7 @@ and I say so plainly so they are not mistaken for independent work:
 * Agent 7, Experimental scientist (prereg, `run_cell.py`, queues)
 * Agent 9, Strategist (ranking)
 
-Their work is self-checked, not independently checked. Independence comes only from Agents 2, 8 and 10, and
-from the results-stage review still to come.
+Their work is self-checked, not independently checked. Independence comes only from Agents 2, 8 (twice) and 10.
 
 ---
 
@@ -411,3 +412,68 @@ established discovery yet.
 | Live E1 tables | `results/E1_tables.md` (regenerate: `python3 xscale/analyse_E1.py`) |
 | Raw per-cell data | `results/E1/*.json` |
 | Replication | `replication/REPORT.md` |
+
+---
+
+## 13. FINAL results (supersedes sections 7 and 11)
+
+**What ran in the end:**
+* 78 E1 cells, the single-position diagnostic, X3 and the separate replication.
+* The 1b arm was cut under the prereg budget rule (decision #24). Each 1b cell took about 1 h, so only
+  160m→1b at k = 4, 8, 16 ran.
+* After the review, a preregistered convergence check R1 (`docs/11_preregistration_R1.md`): 600-step maps at
+  k = 18 and 24 for 70m and 160m.
+
+**13.1 Final KL table** (KL-trained maps, Pile, 200 steps, mean over seeds):
+
+| source | k=6 | k=12 | k=18 | k=24 | source alone |
+|---|---|---|---|---|---|
+| 70m | 1.739 | 1.587 | **1.527** | 1.663 | 0.847 |
+| 160m | 1.456 | 1.199 | **1.044** | 1.116 | 0.486 |
+| 410m-deduped | 1.090 | 0.877 | 0.717 | **0.689** | 0.319 |
+| 410m-seed1 | 1.184 | 0.969 | 0.810 | **0.793** | 0.275 |
+
+**13.2 The main result, D_18** (depth 18 vs linear read-out). The seed-level CI includes map-fit variance.
+
+| source | seed-0 (prereg) | 3 seeds, seed-level CI | WikiText | 600-step maps |
+|---|---|---|---|---|
+| 70m | +0.149 | **+0.136 [0.074, 0.198]** | +0.111 [0.062, 0.160] | **+0.121 [0.097, 0.144]** |
+| 160m | +0.096 | +0.072 [0.015, 0.129] | +0.038 [−0.016, 0.091] | {{160L}} |
+| 410m-deduped | −0.028 | −0.028 | −0.081 | — |
+| 410m-seed1 | −0.018 | 1 seed | −0.065 | — |
+
+**What changed from the interim reading:**
+* **R1, the training budget.** Longer training shrinks 70m's D_18 by about 20% but does not remove it. Both depths
+  improved, so the comparison stayed balanced.
+* **160m is weaker than it looked.** It is significant on Pile only once seed variance is counted.
+* **Mechanism wording narrowed.** We no longer say the upper blocks "use the small model's state". The honest
+  statement is: *for much-smaller sources, the target's last quarter is a better read-out than its head; for
+  equal-size sources it is not*. Why the narrowing: T's own layer-1 state shows the same pattern even more
+  strongly, so generic extra capacity is a live explanation. The next experiment tests this (D8 #1).
+* **Context-corruption claim withdrawn.** The "≈ 40% context corruption" decomposition was invalid (review R10).
+* **FLOP statement corrected.** 70m costs about 1.5 target blocks, between self:1 and self:2.
+  * self:1 beats the 70m stitch at k = 6 (+0.84).
+  * They tie at k = 12.
+  * 70m is better at k ≥ 18.
+* **The objective ratio depends on the budget.** It is 1.30–1.35× at 200 steps but 1.49–1.62× at 600 steps.
+* **Second target (1b, single seed).** {{1B}}
+
+**13.3 Decision: PRELIMINARY FINDING.** It is robust and replicated within one family and an affine map class.
+The mechanism is unresolved, and the practical drafting result is negative. Recommended venue: a workshop. No
+submission has been made. Next three experiments:
+1. a capacity-matched read-out control;
+2. cross-family and absolute-size replication;
+3. training-dynamics emergence.
+
+Details are in `docs/12_final_deliverables.md` (D8).
+
+**13.4 Final file map:**
+
+| You want | File |
+|---|---|
+| Final report (18 sections) | `docs/09_main_report.md` |
+| D1/D2/D4/D5/D6/D8 | `docs/12_final_deliverables.md` |
+| 4-page executive PDF | `report/executive_summary.pdf` |
+| Results-stage review | `docs/10_adversarial_review_results.md` |
+| R1 preregistration | `docs/11_preregistration_R1.md` |
+| Figures | `figures/fig1–4*.png` (`python3 xscale/figures_E1.py`) |
