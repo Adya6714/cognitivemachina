@@ -6,3 +6,4 @@ step 0 loss 1.1614 lr 1.00e-05 t 92s
 step 25 loss 1.1446 lr 9.33e-05 t 261s
 step 50 loss 1.0464 lr 7.50e-05 t 432s
 step 75 loss 0.9525 lr 5.00e-05 t 598s
+step 100 loss 0.9511 lr 2.50e-05 t 767s
