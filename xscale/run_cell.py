@@ -41,7 +41,7 @@ p.add_argument("--out", required=True)
 a = p.parse_args()
 
 torch.manual_seed(a.seed)
-torch.set_num_threads(int(os.environ.get("E1_THREADS", "3")))  # D4: 3 threads avoids oversubscription stalls when another job shares the 4 cores
+torch.set_num_threads(int(os.environ.get("E1_THREADS", "4")))  # D4: 3 threads avoids oversubscription stalls when another job shares the 4 cores
 torch.set_flush_denormal(True)  # deviation D4: guard against denormal slowdowns (affects only |x| < 1e-38)
 t_start = time.time()
 T = load(a.tgt)

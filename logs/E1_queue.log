@@ -25,3 +25,5 @@ S:410m-deduped -> 410m k 24 kl seed 0 | KL stitched 0.681 | KL source 0.311 | R2
 S:EleutherAI/pythia-410m-seed1 -> 410m k 6 mse seed 0 | KL stitched 1.951 | KL source 0.275 | R2 0.277 CKA 0.336 | 444.9s
 S:EleutherAI/pythia-410m-seed1 -> 410m k 6 kl seed 0 | KL stitched 1.184 | KL source 0.275 | R2 0.258 CKA 0.336 | 1593.8s
 S:EleutherAI/pythia-410m-seed1 -> 410m k 12 mse seed 0 | KL stitched 1.261 | KL source 0.275 | R2 0.339 CKA 0.392 | 438.1s
+S:EleutherAI/pythia-410m-seed1 -> 410m k 12 kl seed 0 | KL stitched 0.969 | KL source 0.275 | R2 0.319 CKA 0.392 | 1282.0s
+S:EleutherAI/pythia-410m-seed1 -> 410m k 18 mse seed 0 | KL stitched 1.045 | KL source 0.275 | R2 0.491 CKA 0.314 | 412.1s
