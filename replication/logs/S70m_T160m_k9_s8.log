@@ -1,0 +1,8 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 802.49it/s]
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights:   1%|          | 1/148 [00:00<00:25,  5.79it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 666.88it/s]
+unit test {9: {'max_abs_diff_own_state': 0.0, 'exact': True, 'max_abs_diff_perturbed': 239.57275390625}}
+step 0 loss 1.1614 lr 1.00e-05 t 92s
+step 25 loss 1.1446 lr 9.33e-05 t 261s
+step 50 loss 1.0464 lr 7.50e-05 t 432s
+step 75 loss 0.9525 lr 5.00e-05 t 598s

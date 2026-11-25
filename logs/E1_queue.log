@@ -21,3 +21,5 @@ S:410m-deduped -> 410m k 12 kl seed 0 | KL stitched 0.873 | KL source 0.311 | R2
 S:410m-deduped -> 410m k 18 mse seed 0 | KL stitched 0.933 | KL source 0.311 | R2 0.489 CKA 0.347 | 367.1s
 S:410m-deduped -> 410m k 18 kl seed 0 | KL stitched 0.710 | KL source 0.311 | R2 0.462 CKA 0.347 | 889.5s
 S:410m-deduped -> 410m k 24 mse seed 0 | KL stitched 1.016 | KL source 0.311 | R2 0.625 CKA 0.810 | 355.5s
+S:410m-deduped -> 410m k 24 kl seed 0 | KL stitched 0.681 | KL source 0.311 | R2 0.610 CKA 0.810 | 1097.6s
+S:EleutherAI/pythia-410m-seed1 -> 410m k 6 mse seed 0 | KL stitched 1.951 | KL source 0.275 | R2 0.277 CKA 0.336 | 444.9s
