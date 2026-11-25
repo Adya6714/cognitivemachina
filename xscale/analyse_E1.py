@@ -102,8 +102,45 @@ for src in pairs:
             continue
         d = [per_seq(g24[s], "pile", "stitched", "kl") - per_seq(gk[s], "pile", "stitched", "kl") for s in seeds]
         est, lo, hi, pv = boot_mean_ci(d)
-        dtests.append(dict(src=src, k=k, est=est, lo=lo, hi=hi, p=pv, seeds=seeds))
+        t = dict(src=src, k=k, est=est, lo=lo, hi=hi, p=pv, seeds=seeds)
+        # review R4: preregistered seed-0-only test, reported separately from post-hoc A8 seeds
+        if 0 in seeds:
+            t["seed0"] = boot_mean_ci([d[seeds.index(0)]])[:3]
+        # review R3: seed-level t interval (includes map-fit variance); only with >= 2 seeds
+        sm = np.array([x.mean() for x in d])
+        t["seed_means"] = sm.tolist()
+        if len(sm) >= 2:
+            from scipy import stats
+            h = stats.t.ppf(0.975, len(sm) - 1) * sm.std(ddof=1) / np.sqrt(len(sm))
+            t["seed_t_ci"] = [float(sm.mean() - h), float(sm.mean() + h)]
+        dw = [per_seq(g24[s], "wiki", "stitched", "kl") - per_seq(gk[s], "wiki", "stitched", "kl") for s in seeds]
+        t["wiki"] = boot_mean_ci(dw)[:3]
+        swm = np.array([x.mean() for x in dw])
+        if len(swm) >= 2:
+            from scipy import stats
+            h = stats.t.ppf(0.975, len(swm) - 1) * swm.std(ddof=1) / np.sqrt(len(swm))
+            t["wiki_seed_t_ci"] = [float(swm.mean() - h), float(swm.mean() + h)]
+        dtests.append(t)
 summary["tests"]["D_k"] = dtests
+
+# ---- R1 convergence check (11_preregistration_R1.md) and second target (1b, L = 16): D_k for other cell sets
+def dk_pair(key24, keyk):
+    a = dict(groups.get(key24, [])); b = dict(groups.get(keyk, []))
+    seeds = sorted(set(a) & set(b))
+    if not seeds:
+        return None
+    d = [per_seq(a[s], "pile", "stitched", "kl") - per_seq(b[s], "pile", "stitched", "kl") for s in seeds]
+    dw = [per_seq(a[s], "wiki", "stitched", "kl") - per_seq(b[s], "wiki", "stitched", "kl") for s in seeds]
+    return dict(est_ci=boot_mean_ci(d), wiki=boot_mean_ci(dw)[:3], seeds=seeds)
+extra = []
+for src in ["70m", "160m", "410m-deduped"]:
+    for k in [12, 18]:
+        r = dk_pair((src, "410m", 24, "kl", True), (src, "410m", k, "kl", True))
+        if r: extra.append(dict(label=f"{src}→410m, 600 steps", k=k, **r))
+for k in [4, 8, 12]:
+    r = dk_pair(("160m", "1b", 16, "kl", False), ("160m", "1b", k, "kl", False))
+    if r: extra.append(dict(label="160m→1b (L=16)", k=k, **r))
+summary["tests"]["D_k_extra"] = extra
 
 # ---- A1 read-out calibration
 cal = []
@@ -179,6 +216,20 @@ for t in hself:
 L += ["", "## A1 co-primary: D_k = KL(p_T‖q_24) − KL(p_T‖q_k) (kl objective; > 0 means the upper blocks add value beyond a linear read-out)", "", "| source | k | D_k | 95% CI | one-sided p | seeds |", "|---|---|---|---|---|---|"]
 for t in dtests:
     L.append(f"| {t['src']} | {t['k']} | {t['est']:.3f} | [{t['lo']:.3f}, {t['hi']:.3f}] | {t['p']:.4f} | {t['seeds']} |")
+L += ["", "### D_k robustness (review R3/R4): preregistered seed-0 test; seed-level t CI (incl. map-fit variance); WikiText",
+      "", "| source | k | seed-0 D_k [CI] (prereg) | seed means | seed-level 95% t CI | WikiText D_k [CI] | WikiText seed-level t CI |", "|---|---|---|---|---|---|---|"]
+for t in summary["tests"]["D_k"]:
+    s0 = f"{t['seed0'][0]:.3f} [{t['seed0'][1]:.3f}, {t['seed0'][2]:.3f}]" if "seed0" in t else "–"
+    st = f"[{t['seed_t_ci'][0]:.3f}, {t['seed_t_ci'][1]:.3f}]" if "seed_t_ci" in t else "single seed"
+    wt = f"[{t['wiki_seed_t_ci'][0]:.3f}, {t['wiki_seed_t_ci'][1]:.3f}]" if "wiki_seed_t_ci" in t else "single seed"
+    w = t["wiki"]
+    L.append(f"| {t['src']} | {t['k']} | {s0} | {[round(x, 3) for x in t['seed_means']]} | {st} | {w[0]:.3f} [{w[1]:.3f}, {w[2]:.3f}] | {wt} |")
+L += ["", "Seeds 1–2 at k = 18 (all pairs) and k = 24 (160m) are **post hoc** (amendment A8).", "",
+      "## D_k for the R1 convergence cells (600 steps, n_fit 1024, seed 0) and the 1b target", "",
+      "| cells | k | D_k [CI] Pile | one-sided p | D_k [CI] WikiText | seeds |", "|---|---|---|---|---|---|"]
+for t in summary["tests"]["D_k_extra"]:
+    e = t["est_ci"]; w = t["wiki"]
+    L.append(f"| {t['label']} | {t['k']} | {e[0]:.3f} [{e[1]:.3f}, {e[2]:.3f}] | {e[3]:.4f} | {w[0]:.3f} [{w[1]:.3f}, {w[2]:.3f}] | {t['seeds']} |")
 L += ["", "## A1 read-out calibration (k = 24 map trained to reproduce p_S)", "", "| source | KL(p_S‖q) | KL(p_T‖q) | KL(p_T‖p_S) |", "|---|---|---|---|"]
 for t in cal:
     L.append(f"| {t['src']} | {t['kl_to_source']:.3f} | {t['kl_to_target']:.3f} | {t['source_kl_to_target']:.3f} |")
