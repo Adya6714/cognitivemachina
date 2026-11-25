@@ -41,7 +41,7 @@ the target as well as the small model alone, so frozen latent injection gives <b
 <i>k</i>, then running the target's frozen remaining blocks, produce predictions closer to the target's than (a) a linear read-out
 through the target's head, and (b) the source model itself?</li>
 <li><b>Design.</b> One model family (Pythia, shared tokenizer and data order); sources 70m, 160m, 410m-deduped, 410m-seed1;
-target 410m (24 blocks); depths 6/12/18/24; ridge vs KL-trained maps; 78 cells; frozen preregistration with disclosed amendments.</li>
+target 410m (24 blocks); depths 6/12/18/24; ridge vs KL-trained maps; 79 cells; frozen preregistration with disclosed amendments.</li>
 <li><b>Main finding.</b> D<sub>18</sub> (gain of depth-18 injection over linear read-out) = <b>+0.136</b> nats/token for 70m
 (seed-level 95% CI [0.074, 0.198], 3 seeds), +0.111 on WikiText, +0.121 with 3× longer map training, and replicated by independent
 code (70m→160m: +0.254). 160m: +0.072 [0.015, 0.129]. Equal-size siblings: no depth with D<sub>k</sub> &gt; 0.</li>
@@ -68,7 +68,7 @@ D &gt; 0, at k = 18. Error bars: seed-level t intervals (3 seeds) or sequence bo
 <tr><td>Similarity (CKA, R²) peaks at read-out; function interior</td><td>4 pairs, descriptive</td><td>Weak–moderate</td><td>Exploratory</td></tr>
 <tr><td>Target's own 1st layer beats 70m stitch early</td><td>k = 6: +0.84; tie at k = 12</td><td>Strong at k = 6</td><td>Demonstrated (k = 6)</td></tr>
 <tr><td>Read-out bottleneck</td><td>Head + affine map cannot reproduce p<sub>S</sub> (KL 0.48–0.89)</td><td>Moderate</td><td>Supported indirectly</td></tr>
-<tr><td>Second target (1b)</td><td>{{1B}}</td><td>Single seed</td><td>Not yet established</td></tr>
+<tr><td>Second target (1b)</td><td>Inconclusive. Single seed, 160m→1b (size ratio 0.16): D_4 = −0.266 [−0.351, −0.187], D_8 = +0.008 [−0.053, 0.066] (no benefit at 1/4 and 1/2 depth, as in the 410m target at those relative depths); the 3/4-depth cell (k = 12), where the effect appeared in 410m, was dropped in the budget cut, so the decisive depth is untested</td><td>Single seed</td><td>Not yet established</td></tr>
 <tr><td>i.i.d. speculative formula accurate to ~6%</td><td>Real sampling, 3 draft lengths</td><td>Moderate</td><td>Demonstrated (negative)</td></tr>
 </table>
 

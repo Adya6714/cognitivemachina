@@ -138,7 +138,7 @@ result) and A8 (post hoc), and from `11_preregistration_R1.md`.
   (second target, reduced arm).
 * **Hardware.** 4 CPU cores and 15 GB RAM, float32, no GPU.
 * **Data.** NeelNanda/pile-10k (fit docs 0–4999, eval docs 5000–9999) and the WikiText-103 test split.
-* **Cells.** 78 E1 cells, plus the single-position diagnostic, X3, and the separate replication.
+* **Cells.** 79 E1 cells, plus the single-position diagnostic, X3, and the separate replication.
 * **Deviations,** all in `00_decision_log.md`:
   * D1: WikiText windows.
   * D3: reordering.
@@ -187,7 +187,7 @@ result) and A8 (post hoc), and from `11_preregistration_R1.md`.
     reaches Δ > 0.
 * **Result 4, second target (1b, L = 16, 160m source, seed 0, reduced arm).**
   * KL at k = 4 is 1.544 and at k = 8 it is 1.270; the source alone is 0.560.
-  * D_k against k = 16: {{1B}}.
+  * D_k against k = 16: inconclusive. Single seed, 160m→1b (size ratio 0.16): D_4 = −0.266 [−0.351, −0.187], D_8 = +0.008 [−0.053, 0.066] (no benefit at 1/4 and 1/2 depth, as in the 410m target at those relative depths); the 3/4-depth cell (k = 12), where the effect appeared in 410m, was dropped in the budget cut, so the decisive depth is untested.
 * **Result 5, independent replication** (`replication/REPORT.md`). Separate code, 70m→160m, WikiText fit, seeds 7–8:
   * D_9 = +0.254 [0.196, 0.320] on WikiText-val, positive on 99% of sequences; Pile median +0.15.
   * k = 3 and k = 6 are eval-set dependent.

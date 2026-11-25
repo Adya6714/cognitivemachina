@@ -41,7 +41,7 @@ drafting speed-up from frozen cross-scale latent injection at this scale.
   initialisation is not verified.
 * **U2. A substantial per-token mismatch remains.** Shown by the single-position diagnostic (8 sequences, k = 12).
   The "≈ 40% context corruption" decomposition is **withdrawn**.
-* **U3. Second target (1b).** {{1B}}
+* **U3. Second target (1b).** inconclusive. Single seed, 160m→1b (size ratio 0.16): D_4 = −0.266 [−0.351, −0.187], D_8 = +0.008 [−0.053, 0.066] (no benefit at 1/4 and 1/2 depth, as in the 410m target at those relative depths); the 3/4-depth cell (k = 12), where the effect appeared in 410m, was dropped in the budget cut, so the decisive depth is untested
 
 **Reproduction of prior work:**
 * Chen et al. 2025 (2506.06609) report that MSE-stitched small Pythia models are much worse than the target. We
@@ -93,7 +93,7 @@ established.
 | A shared initialisation yields partially shared raw coordinates | Identity stitches, 1 cell each | 2503.09543 | Weak | Initialisation not verified | EX |
 | A per-token mismatch remains even with correct context | A7 diagnostic, 8 sequences | — | Weak | No CI; one k | EX |
 | The i.i.d. speculative formula is accurate to within about 6% (70m/410m) | X3, 3 γ values, real sampling | 2211.17192; 2405.19715 | Moderate | One pair, one temperature, single seed per γ | DD (negative) |
-| The effect transfers to a second target (1b) | {{1B}} | — | Single seed, reduced arm | — | NE / EX |
+| The effect transfers to a second target (1b) | inconclusive. Single seed, 160m→1b (size ratio 0.16): D_4 = −0.266 [−0.351, −0.187], D_8 = +0.008 [−0.053, 0.066] (no benefit at 1/4 and 1/2 depth, as in the 410m target at those relative depths); the 3/4-depth cell (k = 12), where the effect appeared in 410m, was dropped in the budget cut, so the decisive depth is untested | — | Single seed, reduced arm | — | NE / EX |
 
 **Novelty statement.** Novelty class N2–N3: a new controlled design and an incremental finding. What is new is:
 * the factorial design (size ratio × depth × objective in one family);
@@ -163,7 +163,7 @@ Stitching, KL-trained maps and similarity–function dissociation are **not** ne
    * Use 70m and 160m, 3 seeds, 600-step maps. Cost: about 6 CPU-hours.
 2. **Cross-family and absolute-size replication.** This tests generality and separates size ratio from absolute
    size.
-   * Pairs: Pythia-160m → 1b (full k grid, 3 seeds); Pythia-410m → 1.4b; and one non-Pythia family with a shared
+   * Pairs: Pythia-160m → 1b (full k grid including k = 12 = 3/4 depth, 3 seeds); Pythia-410m → 1.4b; and one non-Pythia family with a shared
      tokenizer (e.g. SmolLM2 135m → 360m → 1.7b).
    * Cost: a GPU-day, or about 40 CPU-hours.
 3. **Training-dynamics emergence (X2).** This asks whether the interior advantage emerges early or late in

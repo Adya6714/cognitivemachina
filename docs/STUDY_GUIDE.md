@@ -418,7 +418,7 @@ established discovery yet.
 ## 13. FINAL results (supersedes sections 7 and 11)
 
 **What ran in the end:**
-* 78 E1 cells, the single-position diagnostic, X3 and the separate replication.
+* 79 E1 cells, the single-position diagnostic, X3 and the separate replication.
 * The 1b arm was cut under the prereg budget rule (decision #24). Each 1b cell took about 1 h, so only
   160m→1b at k = 4, 8, 16 ran.
 * After the review, a preregistered convergence check R1 (`docs/11_preregistration_R1.md`): 600-step maps at
@@ -456,7 +456,7 @@ established discovery yet.
   * They tie at k = 12.
   * 70m is better at k ≥ 18.
 * **The objective ratio depends on the budget.** It is 1.30–1.35× at 200 steps but 1.49–1.62× at 600 steps.
-* **Second target (1b, single seed).** {{1B}}
+* **Second target (1b, single seed).** inconclusive. Single seed, 160m→1b (size ratio 0.16): D_4 = −0.266 [−0.351, −0.187], D_8 = +0.008 [−0.053, 0.066] (no benefit at 1/4 and 1/2 depth, as in the 410m target at those relative depths); the 3/4-depth cell (k = 12), where the effect appeared in 410m, was dropped in the budget cut, so the decisive depth is untested
 
 **13.3 Decision: PRELIMINARY FINDING.** It is robust and replicated within one family and an affine map class.
 The mechanism is unresolved, and the practical drafting result is negative. Recommended venue: a workshop. No
