@@ -27,3 +27,8 @@ S:EleutherAI/pythia-410m-seed1 -> 410m k 6 kl seed 0 | KL stitched 1.184 | KL so
 S:EleutherAI/pythia-410m-seed1 -> 410m k 12 mse seed 0 | KL stitched 1.261 | KL source 0.275 | R2 0.339 CKA 0.392 | 438.1s
 S:EleutherAI/pythia-410m-seed1 -> 410m k 12 kl seed 0 | KL stitched 0.969 | KL source 0.275 | R2 0.319 CKA 0.392 | 1282.0s
 S:EleutherAI/pythia-410m-seed1 -> 410m k 18 mse seed 0 | KL stitched 1.045 | KL source 0.275 | R2 0.491 CKA 0.314 | 412.1s
+S:EleutherAI/pythia-410m-seed1 -> 410m k 18 kl seed 0 | KL stitched 0.810 | KL source 0.275 | R2 0.470 CKA 0.314 | 965.6s
+S:EleutherAI/pythia-410m-seed1 -> 410m k 24 mse seed 0 | KL stitched 1.191 | KL source 0.275 | R2 0.625 CKA 0.855 | 338.3s
+S:EleutherAI/pythia-410m-seed1 -> 410m k 24 kl seed 0 | KL stitched 0.793 | KL source 0.275 | R2 0.613 CKA 0.855 | 566.5s
+S:410m-deduped -> 410m k 12 id seed 0 | KL stitched 3.524 | KL source 0.311 | R2 -36.393 CKA 0.431 | 363.8s
+S:410m-deduped -> 410m k 24 id seed 0 | KL stitched 4.481 | KL source 0.311 | R2 -3.627 CKA 0.810 | 415.8s
