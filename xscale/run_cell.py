@@ -41,7 +41,8 @@ p.add_argument("--out", required=True)
 a = p.parse_args()
 
 torch.manual_seed(a.seed)
-torch.set_num_threads(4)
+torch.set_num_threads(int(os.environ.get("E1_THREADS", "3")))  # D4: 3 threads avoids oversubscription stalls when another job shares the 4 cores
+torch.set_flush_denormal(True)  # deviation D4: guard against denormal slowdowns (affects only |x| < 1e-38)
 t_start = time.time()
 T = load(a.tgt)
 LT = n_layers(T)
@@ -117,6 +118,8 @@ if a.obj == "kl":
             opt.zero_grad(); loss.backward(); opt.step(); sched.step()
             if step % 25 == 0:
                 train_log.append((step, round(loss.item(), 4)))
+                with open("logs/progress_" + os.path.basename(a.out).replace(".json", ".txt"), "a") as pf:
+                    pf.write(f"step {step} loss {loss.item():.4f} t {time.time() - t_start:.0f}s\n")
     del cache
 if a.obj == "id":
     assert W0.shape[0] == W0.shape[1]
