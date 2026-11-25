@@ -43,3 +43,15 @@ self:2 -> 410m k 12 kl seed 0 | KL stitched 1.328  | R2 0.368 CKA 0.403 | 1068.4
 self:2 -> 410m k 18 kl seed 0 | KL stitched 2.322  | R2 0.299 CKA 0.156 | 798.6s
 self:2 -> 410m k 24 kl seed 0 | KL stitched 3.378  | R2 0.295 CKA 0.183 | 473.1s
 self:0 -> 410m k 6 mse seed 0 | KL stitched 2.086  | R2 0.367 CKA 0.530 | 221.5s
+self:0 -> 410m k 12 mse seed 0 | KL stitched 2.481  | R2 0.279 CKA 0.377 | 215.4s
+self:0 -> 410m k 18 mse seed 0 | KL stitched 3.660  | R2 0.209 CKA 0.141 | 211.4s
+self:0 -> 410m k 24 mse seed 0 | KL stitched 6.852  | R2 0.213 CKA 0.178 | 224.4s
+self:0 -> 410m k 6 kl seed 0 | KL stitched 1.254  | R2 0.348 CKA 0.530 | 1347.4s
+S70m_T410m_k12_kl_s0 KL all-positions 1.701 | single-position 1.004 | n=120
+S160m_T410m_k12_kl_s0 KL all-positions 1.321 | single-position 0.849 | n=120
+S410m-deduped_T410m_k12_kl_s0 KL all-positions 0.984 | single-position 0.586 | n=120
+S410m-seed1_T410m_k12_kl_s0 KL all-positions 1.037 | single-position 0.684 | n=120
+S:70m -> 410m k 12 kl seed 1 | KL stitched 1.588 | KL source 0.845 | R2 0.212 CKA 0.283 | 1200.8s
+S:160m -> 410m k 12 kl seed 1 | KL stitched 1.195 | KL source 0.493 | R2 0.228 CKA 0.391 | 1205.8s
+S:410m-deduped -> 410m k 12 kl seed 1 | KL stitched 0.879 | KL source 0.319 | R2 0.308 CKA 0.456 | 1335.1s
+S:70m -> 410m k 24 kl seed 1 | KL stitched 1.634 | KL source 0.845 | R2 0.395 CKA 0.236 | 533.5s
