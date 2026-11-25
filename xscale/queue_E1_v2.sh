@@ -29,5 +29,6 @@ for s in 1 2; do for pair in "70m" "160m" "410m-deduped"; do run "S${pair}_T410m
 run "S70m_T410m_k12_kl_s0_long" --src S:70m --tgt 410m --k 12 --obj kl --seed 0 --steps 600 --n_fit 1024
 run "S410m-deduped_T410m_k12_kl_s0_long" --src S:410m-deduped --tgt 410m --k 12 --obj kl --seed 0 --steps 600 --n_fit 1024
 # 9. 1b replication arm (frozen, budget permitting)
-for pair in "160m" "410m"; do for k in 4 8 12 16; do run "S${pair}_T1b_k${k}_kl_s0" --src S:$pair --tgt 1b --k $k --obj kl --seed 0; done; done
+# Decision 24 (budget cut): reduced to 160m->1b k4,8,16; 410m->1b and k12 dropped.
+for k in 4 8 16; do run "S160m_T1b_k${k}_kl_s0" --src S:160m --tgt 1b --k $k --obj kl --seed 0; done
 echo QUEUE_DONE >> logs/E1_queue.log
