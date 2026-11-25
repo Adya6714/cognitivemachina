@@ -19,3 +19,5 @@ S:410m-deduped -> 410m k 6 kl seed 0 | KL stitched 1.090 | KL source 0.311 | R2 
 S:410m-deduped -> 410m k 12 mse seed 0 | KL stitched 1.176 | KL source 0.311 | R2 0.340 CKA 0.431 | 368.8s
 S:410m-deduped -> 410m k 12 kl seed 0 | KL stitched 0.873 | KL source 0.311 | R2 0.317 CKA 0.431 | 1100.1s
 S:410m-deduped -> 410m k 18 mse seed 0 | KL stitched 0.933 | KL source 0.311 | R2 0.489 CKA 0.347 | 367.1s
+S:410m-deduped -> 410m k 18 kl seed 0 | KL stitched 0.710 | KL source 0.311 | R2 0.462 CKA 0.347 | 889.5s
+S:410m-deduped -> 410m k 24 mse seed 0 | KL stitched 1.016 | KL source 0.311 | R2 0.625 CKA 0.810 | 355.5s

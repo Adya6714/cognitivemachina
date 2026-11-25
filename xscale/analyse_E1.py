@@ -57,7 +57,7 @@ for key, lst in sorted(groups.items()):
                 continue
             g = [per_seq(c, ev, "stitched", metric) for _, c in lst]
             res[f"stitched_{metric}"] = boot_mean_ci(g)[:3]
-            if "source" in lst[0][1]["eval"][ev]["per_seq"]:
+            if metric in lst[0][1]["eval"][ev]["per_seq"].get("source", {}):
                 gs = [per_seq(c, ev, "source", metric) for _, c in lst]
                 res[f"source_{metric}"] = boot_mean_ci(gs)[:3]
             gt = [per_seq(c, ev, "target", "ce") for _, c in lst]
