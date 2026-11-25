@@ -7,3 +7,5 @@ Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF
 cache unit test max TV(cached, uncached) = 9.152247450754259e-05 | max logit diff 0.0029888153076171875
 gamma 2: realised tokens/call 2.016 | 474s
 gamma 4: realised tokens/call 2.355 | 722s
+gamma 8: realised tokens/call 2.535 | 997s
+X3_DONE
