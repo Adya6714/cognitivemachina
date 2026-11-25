@@ -7,3 +7,7 @@ step 25 loss 2.4317 lr 9.33e-05 t 254s
 step 50 loss 1.0637 lr 7.50e-05 t 445s
 step 75 loss 1.0954 lr 5.00e-05 t 632s
 step 100 loss 1.2096 lr 2.50e-05 t 826s
+step 125 loss 1.0037 lr 6.70e-06 t 1016s
+step 149 loss 0.9866 lr 1.10e-08 t 1200s
+wt_val KL_stitch 1.027863817755133 KL_source 0.6530369298998266
+pile_hi KL_stitch 2.0743171558715403 KL_source 0.5625225061085075
