@@ -81,3 +81,4 @@ S:160m -> 1b k 8 kl seed 0 | KL stitched 1.270 | KL source 0.560 | R2 0.197 CKA 
 S:70m -> 410m k 24 kl seed 0 | KL stitched 1.469 | KL source 0.830 | R2 0.400 CKA 0.329 | 1283.2s
 S:70m -> 410m k 18 kl seed 0 | KL stitched 1.349 | KL source 0.830 | R2 0.276 CKA 0.202 | 2130.4s
 S:160m -> 410m k 24 kl seed 0 | KL stitched 0.972 | KL source 0.474 | R2 0.481 CKA 0.543 | 1284.8s
+S:160m -> 410m k 18 kl seed 0 | KL stitched 0.901 | KL source 0.474 | R2 0.334 CKA 0.304 | 2363.1s

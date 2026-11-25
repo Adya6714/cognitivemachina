@@ -25,7 +25,7 @@ drafting speed-up from frozen cross-scale latent injection at this scale.
 
 **Preliminary** (single target family, 3 seeds or fewer, or depends on the budget or eval set):
 * **P1.** 160m→410m D_18 = +0.072, CI [0.015, 0.129] on Pile, but not significant on WikiText. Its 600-step
-  value is {{160L}}.
+  value is +0.071 [0.051, 0.090] (WikiText +0.041 [0.024, 0.058]), robust.
 * **P2. KL training helps only modestly at 200 steps.** It improves over ridge by 1.30–1.35× at k = 12, short of
   the preregistered 1.5×. At 600 steps the ratio is 1.49–1.62×, so it depends on the budget.
 * **P3. Similarity peaks at the read-out, function does not.** Representational similarity (CKA, R²) peaks at
@@ -82,7 +82,7 @@ established.
 | Claim | Supporting evidence | Closest prior work | Evidence strength | Remaining uncertainty | Status |
 |---|---|---|---|---|---|
 | For 70m→410m, depth-18 injection beats the linear read-out (D_18 > 0) | 3 seeds, Pile and WikiText, seed-level CI excluding 0; 600-step check +0.121; separate-code replication (70m→160m, k = 9) | 2603.18908 (late layers only); 2506.06609 (single depth, MSE) | Strong within the setting | Possible artefact of the map class; 1 500-step maps untested; one family | DD |
-| Same for 160m→410m | 3 seeds on Pile (CI [0.015, 0.129]); WikiText CI includes 0; 600-step {{160L}} | same | Moderate | Eval-set dependence | SI |
+| Same for 160m→410m | 3 seeds on Pile (CI [0.015, 0.129]); WikiText CI includes 0; 600-step +0.071 [0.051, 0.090] (WikiText +0.041 [0.024, 0.058]), robust | same | Moderate | Eval-set dependence | SI |
 | Equal-size siblings never benefit from interior injection | 2 siblings, 3 seeds (deduped), all k | PolyPythias 2503.09543 (sibling source) | Strong for these 2 pairs | Only 2 equal-size pairs; under MSE maps the siblings also have an interior optimum | DD |
 | The sign change tracks size ratio, not data or seed | data sibling ≈ seed sibling; 70m and 160m positive | — | Moderate | 2 small sources only; ratio and absolute size confounded | SI |
 | No affine stitch beats the source alone as an approximation of T | 16/16 CIs < 0; 600-step cells; replication | 2606.03280 (destructive injection) | Strong | Non-affine maps untested | DD |

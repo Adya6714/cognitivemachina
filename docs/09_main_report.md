@@ -24,7 +24,7 @@ supply representations a larger model can use.
   * 70m: D_18 = +0.136 nats/token, seed-level 95% CI [0.074, 0.198].
   * 160m: D_18 = +0.072, CI [0.015, 0.129].
   * For 70m the effect survives maps trained 3× longer (D_18 = +0.121 [0.097, 0.144], seed 0). For 160m, the
-    600-step value is {{160L}}.
+    600-step value is +0.071 [0.051, 0.090] (WikiText +0.041 [0.024, 0.058]), robust.
   * An independent re-implementation reproduces the effect for 70m→160m, at 3/4 depth.
 * **Equal-size models never benefit.** Two equal-size siblings show no interior depth with D_k > 0.
 * **No stitch beats the source alone.** Every stitch is a worse approximation of T than the source model alone
@@ -179,7 +179,7 @@ result) and A8 (post hoc), and from `11_preregistration_R1.md`.
     > 0), and on WikiText +0.086 [0.063, 0.109]. Seed 0 at 200 steps was +0.149, so the effect shrinks by about
     20% but remains. **Robust under the preregistered rule.**
   * 70m D_12 at 600 steps: +0.091 [0.034, 0.142], WikiText +0.026 [−0.013, 0.065].
-  * 160m: KL at k = 24 is 0.972, and at k = 18 it is {{160L_KL}}, giving D_18 = {{160L}}.
+  * 160m: KL at k = 24 is 0.972, and at k = 18 it is 0.901, giving D_18 = +0.071 [0.051, 0.090] (WikiText +0.041 [0.024, 0.058]), robust.
 * **Result 3, H-ratio (frozen primary).** Δ_k < 0 for every source and every k; all 16 upper CI bounds are < 0.
   * The 70m prediction "Δ < 0 at all k" is **confirmed**.
   * The sibling prediction "Δ > 0" is **falsified**: the best sibling value is Δ = −0.370 at k = 24.

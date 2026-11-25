@@ -15,3 +15,10 @@ step 350 loss 0.6968 t 1562s
 step 375 loss 1.0395 t 1637s
 step 400 loss 0.7134 t 1707s
 step 425 loss 0.9181 t 1776s
+step 450 loss 0.6809 t 1850s
+step 475 loss 0.5779 t 1917s
+step 500 loss 0.6064 t 1987s
+step 525 loss 0.7216 t 2058s
+step 550 loss 0.6008 t 2131s
+step 575 loss 0.7873 t 2201s
+step 600 loss 0.7670 t 2271s

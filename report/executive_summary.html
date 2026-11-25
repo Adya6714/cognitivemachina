@@ -61,7 +61,7 @@ D &gt; 0, at k = 18. Error bars: seed-level t intervals (3 seeds) or sequence bo
 <table>
 <tr><th>Claim</th><th>Evidence</th><th>Strength</th><th>Status</th></tr>
 <tr><td>70m→410m: depth 18 beats linear read-out</td><td>3 seeds; Pile + WikiText; 600-step check; independent replication</td><td>Strong (within setting)</td><td>Demonstrated</td></tr>
-<tr><td>160m→410m: same</td><td>3 seeds, Pile CI &gt; 0; WikiText CI includes 0; 600-step: {{160L}}</td><td>Moderate</td><td>Supported indirectly</td></tr>
+<tr><td>160m→410m: same</td><td>3 seeds, Pile CI &gt; 0; WikiText CI includes 0; 600-step: +0.071 [0.051, 0.090] (WikiText +0.041 [0.024, 0.058]), robust</td><td>Moderate</td><td>Supported indirectly</td></tr>
 <tr><td>Equal-size siblings never benefit</td><td>2 siblings, all depths</td><td>Strong for 2 pairs</td><td>Demonstrated</td></tr>
 <tr><td>No affine stitch beats the source alone</td><td>16/16 CIs &lt; 0; replication</td><td>Strong</td><td>Demonstrated</td></tr>
 <tr><td>KL objective &lt; 1.5× better than ridge</td><td>1.30–1.35× (200 steps); 1.49–1.62× (600)</td><td>Budget-dependent</td><td>Supported indirectly</td></tr>
@@ -97,7 +97,7 @@ optimum at k = 18.</figcaption></figure>
 <h3>Controls and ablations</h3>
 <ul>
 <li><b>Training budget (adversarial review R1).</b> 3× longer training lowers KL 13–17% at every depth tested but keeps 70m's
-D<sub>18</sub> at +0.121 [0.097, 0.144]. 160m: {{160L}}.</li>
+D<sub>18</sub> at +0.121 [0.097, 0.144]. 160m: +0.071 [0.051, 0.090] (WikiText +0.041 [0.024, 0.058]), robust.</li>
 <li><b>Same size, different data vs different seed.</b> Both siblings behave alike, so the sign change tracks size ratio, not data.</li>
 <li><b>Identity (no map).</b> Siblings share no usable coordinates (KL 3.5 and 9.5); exploratory hint of a shared initialisation.</li>
 <li><b>Target's own early layers.</b> self:1 at k = 6: 0.90 vs 1.74 for 70m; tie at k = 12; 70m stitch better at k ≥ 18.</li>
