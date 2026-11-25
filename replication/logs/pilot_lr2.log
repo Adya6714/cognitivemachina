@@ -1,0 +1,16 @@
+== k=6 lr=1e-4
+step 0 loss 1.1576 lr 1.00e-05 t 79s
+step 25 loss 1.3233 lr 3.09e-05 t 263s
+step 39 loss 0.9927 lr 1.54e-07 t 366s
+pilot: fixed-batch KL before 1.3072 after 1.0960 | mean loss first5 1.3370 last10 1.0991
+== k=6 lr=3e-4
+step 0 loss 1.1576 lr 3.00e-05 t 84s
+step 25 loss 2.0891 lr 9.26e-05 t 286s
+step 39 loss 1.3608 lr 4.62e-07 t 394s
+pilot: fixed-batch KL before 1.3072 after 1.4977 | mean loss first5 1.6499 last10 1.5085
+== k=12 lr=1e-4
+step 0 loss 1.1510 lr 1.00e-05 t 129s
+step 25 loss 1.6717 lr 3.09e-05 t 278s
+step 39 loss 1.1010 lr 1.54e-07 t 360s
+pilot: fixed-batch KL before 1.5524 after 1.3726 | mean loss first5 1.3499 last10 1.1460
+== k=12 lr=3e-4
