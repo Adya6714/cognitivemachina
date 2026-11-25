@@ -5,3 +5,5 @@ Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF
   output = func(self, *args, **kwargs)
 [transformers] `past_key_values`/`cache_params` are deprecated. Use `cache` instead.
 cache unit test max TV(cached, uncached) = 9.152247450754259e-05 | max logit diff 0.0029888153076171875
+gamma 2: realised tokens/call 2.016 | 474s
+gamma 4: realised tokens/call 2.355 | 722s
