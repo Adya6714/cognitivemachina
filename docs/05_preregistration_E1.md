@@ -138,3 +138,5 @@ replace any frozen test.
 * **Prereg inconsistency (issue 3).** The background section says n_fit = 1024. The budget section and
   the queue use 512, and 512 is binding.
 * **Deviation D3.** The run order is changed so that A1–A7 precede the extra seeds and the 1b arm.
+
+* **A8 (POST-RESULT, 2026-11-25).** Added after seeing the seed-0 D_k table: seeds 1–2 for kl at k = 18 (all three pairs) and k = 24 (160m). These cells are labelled post hoc. The seed-0 D_k results remain the preregistered single-seed test.
