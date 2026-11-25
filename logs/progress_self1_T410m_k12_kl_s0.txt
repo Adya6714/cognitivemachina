@@ -1,0 +1,8 @@
+step 25 loss 1.3202 t 236s
+step 50 loss 1.3861 t 332s
+step 75 loss 1.4727 t 431s
+step 100 loss 1.4374 t 531s
+step 125 loss 1.2190 t 629s
+step 150 loss 1.2929 t 726s
+step 175 loss 1.1088 t 829s
+step 200 loss 0.9900 t 932s
