@@ -40,3 +40,6 @@ self:1 -> 410m k 18 kl seed 0 | KL stitched 2.524  | R2 0.268 CKA 0.132 | 741.0s
 self:1 -> 410m k 24 kl seed 0 | KL stitched 3.495  | R2 0.277 CKA 0.161 | 454.4s
 self:2 -> 410m k 6 kl seed 0 | KL stitched 0.686  | R2 0.512 CKA 0.566 | 1299.7s
 self:2 -> 410m k 12 kl seed 0 | KL stitched 1.328  | R2 0.368 CKA 0.403 | 1068.4s
+self:2 -> 410m k 18 kl seed 0 | KL stitched 2.322  | R2 0.299 CKA 0.156 | 798.6s
+self:2 -> 410m k 24 kl seed 0 | KL stitched 3.378  | R2 0.295 CKA 0.183 | 473.1s
+self:0 -> 410m k 6 mse seed 0 | KL stitched 2.086  | R2 0.367 CKA 0.530 | 221.5s
