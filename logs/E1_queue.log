@@ -58,3 +58,7 @@ S:70m -> 410m k 24 kl seed 1 | KL stitched 1.634 | KL source 0.845 | R2 0.395 CK
 HTTP Error 429 thrown while requesting GET https://huggingface.co/api/models/EleutherAI/pythia-70m/tree/main/additional_chat_templates
 S:410m-deduped -> 410m k 24 kl seed 1 | KL stitched 0.682 | KL source 0.319 | R2 0.611 CKA 0.817 | 862.6s
 S:70m -> 410m k 12 kl seed 2 | KL stitched 1.575 | KL source 0.867 | R2 0.235 CKA 0.413 | 1253.6s
+S:160m -> 410m k 12 kl seed 2 | KL stitched 1.205 | KL source 0.492 | R2 0.232 CKA 0.383 | 1279.2s
+S:410m-deduped -> 410m k 12 kl seed 2 | KL stitched 0.880 | KL source 0.328 | R2 0.309 CKA 0.418 | 1391.6s
+S:70m -> 410m k 24 kl seed 2 | KL stitched 1.671 | KL source 0.867 | R2 0.413 CKA 0.553 | 611.0s
+S:410m-deduped -> 410m k 24 kl seed 2 | KL stitched 0.702 | KL source 0.328 | R2 0.598 CKA 0.809 | 718.5s
