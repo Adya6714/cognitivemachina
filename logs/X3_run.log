@@ -1,0 +1,7 @@
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 761.98it/s]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<00:48,  5.97it/s]Loading weights:   6%|▌         | 18/292 [00:00<00:03, 79.14it/s]Loading weights:  75%|███████▍  | 218/292 [00:00<00:00, 819.24it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 641.29it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/local/lib/python3.13/site-packages/transformers/utils/generic.py:1040: FutureWarning: `past_key_values` is deprecated and will be removed in version 5.40.0 for `GPTNeoXForCausalLM.forward`. Use `cache` instead.
+  output = func(self, *args, **kwargs)
+[transformers] `past_key_values`/`cache_params` are deprecated. Use `cache` instead.
+cache unit test max TV(cached, uncached) = 9.152247450754259e-05 | max logit diff 0.0029888153076171875
